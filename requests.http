@@ -6,3 +6,4 @@ Content-Type: application/json
     "estado": true,
     "posicion":"A1"
 }
+//Esta solicitud POST se utiliza para crear un nuevo recurso de usuario en el servidor, enviando la información del estado y la posición del usuario en el cuerpo de la solicitud en formato JSON.
