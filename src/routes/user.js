@@ -1,22 +1,51 @@
-//Se importa el framework Express para manejar las rutas del usuario.
 const express = require("express");
+const User = require("../models/user");
 
-// Se importa el esquema de usuario desde el modelo correspondiente.
-const userSchema = require("../models/user");
-
-// Se crea un router de Express para manejar las rutas de usuario.
 const router = express.Router();
 
-// Ruta para crear un usuario.
+// create user
 router.post("/users", (req, res) => {
-  // Se crea un nuevo usuario utilizando el esquema de usuario y los datos del cuerpo de la solicitud.
-  const user = userSchema(req.body);
+  const { estado, posicion } = req.body; // Extrae solo los campos necesarios
+  const newUser = new User({ estado, posicion }); // Crea un nuevo usuario con los campos requeridos
   
-  // Se guarda el usuario en la base de datos.
-  user.save()
-    .then((data) => res.json(data)) // Si se guarda correctamente, se devuelve el usuario creado.
-    .catch((error) => res.json({ message: error })); // Si hay un error, se devuelve un mensaje de error.
+  newUser.save()
+    .then((data) => res.json(data))
+    .catch((error) => res.json({ message: error }));
 });
 
-// Se exporta el router para su uso en otras partes de la aplicación.
+// get all users
+router.get("/users", (req, res) => {
+  User.find({}, 'estado posicion') // Proyecta solo los campos estado y posicion
+    .then((data) => res.json(data))
+    .catch((error) => res.json({ message: error }));
+});
+
+// get a user
+router.get("/users/:id", (req, res) => {
+  const { id } = req.params;
+  User.findById(id, 'estado posicion') // Proyecta solo los campos estado y posicion
+    .then((data) => res.json(data))
+    .catch((error) => res.json({ message: error }));
+});
+
+
+// delete a user
+router.delete("/users/:id", (req, res) => {
+  const { id } = req.params;
+  User.deleteOne({ _id: id })
+    .then((data) => res.json(data))
+    .catch((error) => res.json({ message: error }));
+});
+
+
+// update a user
+router.put("/users/:id", (req, res) => {
+  const { id } = req.params;
+  const { estado, posicion } = req.body; // Solo acepta los campos necesarios
+  
+  User.updateOne({ _id: id }, { $set: { estado, posicion } })
+    .then((data) => res.json(data))
+    .catch((error) => res.json({ message: error }));
+});
+
 module.exports = router;
